@@ -5,12 +5,11 @@
 
 # If you plan on making your server accessible on your network, you may need
 # to change this device name (works for macbooks)
-$BRIDGE_DEVICE = 'en0: Wi-Fi (AirPort)'
+# $BRIDGE_DEVICE = 'en0: Wi-Fi (AirPort)'
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "precise64"
-  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
-  config.vm.provision :shell, :path => "minecraft_bootstrap"
+  config.vm.box = "ubuntu/precise32"
+  config.vm.provision :shell, :path => "forge_bootstrap"
 
   # We're going to increase the ram to 1.5GB. This may make it unplayable if
   # you're host doesn't have very much memory

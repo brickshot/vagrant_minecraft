@@ -1,0 +1,68 @@
+#!/bin/bash
+set -e
+set -x
+
+# Minecraft server quick-installer
+#
+# Initially by Stephen Wood
+# www.heystephenwood.com
+# https://github.com/stephen-mw/vagrant_minecraft
+#
+# Adapted for Forge by brickshot
+
+# Some default variables to get the ball started
+FORGE_VERSION="1.8-11.14.3.1450"
+FORGE_INSTALLER_URL="http://files.minecraftforge.net/maven/net/minecraftforge/forge/${FORGE_VERSION}/forge-${FORGE_VERSION}-installer.jar"
+WORK_DIR="/opt/minecraft"
+
+# The only required package is openjdk-6
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -y
+apt-get install -y --no-install-recommends openjdk-6-jre-headless
+
+# We want to save persistent files, so we"ll symlink over that directory
+test -L ${WORK_DIR} || ln -s /vagrant/persistent_files ${WORK_DIR}
+
+test -d ${WORK_DIR}/logs || mkdir -p ${WORK_DIR}/logs
+cd ${WORK_DIR}
+
+# Download the forge installer jar if it doesn"t already exist
+test -f "forgeInstaller.jar" && rm forgeInstaller.jar
+test -f "forgeInstaller.jar" || wget -q -O forgeInstaller.jar "${FORGE_INSTALLER_URL}" 
+
+# Run the installer
+java -jar forgeInstaller.jar nogui --installServer > logs/forgeInstaller.log 2>&1
+
+# Accept the eula
+cat > eula.txt <<EULA
+# By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).
+eula=TRUE
+EULA
+
+# Make startup script with upstart
+cat > /etc/init/minecraft.conf <<MINECRAFT_CONF
+# Minecraft upstart script
+
+start on (local-filesystems and net-device-up IFACE!=lo)
+stop on [!12345]
+
+respawn
+
+chdir ${WORK_DIR}
+
+exec java -Xmx1024M -Xms1024M -jar forge-${FORGE_VERSION}-universal.jar nogui > ${WORK_DIR}/logs/service.log 2>&1
+MINECRAFT_CONF
+
+# A logrotate script to keep the minecraft server log from getting too large
+cat > /etc/logrotate.d/minecraft <<MINECRAFT_LOGROTATE
+${WORK_DIR}/logs/service.log {
+  rotate 24
+  weekly
+  compress
+  notifempty
+  copytruncate
+}
+MINECRAFT_LOGROTATE
+
+initctl reload-configuration
+service minecraft start
