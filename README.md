@@ -13,5 +13,6 @@ Forked from [vagrant_minecraft](https://github.com/stephen-mw/vagrant_minecraft)
 - Run minecraft
 - Create a new profile
 - Set the `Game Directory` to the place you installed Vagrant -> gameDirectory. Now your mods will be loaded in to your client as well.
+- Connect to server at `127.0.0.1`
 - Play
 
