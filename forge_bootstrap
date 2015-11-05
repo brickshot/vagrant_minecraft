@@ -40,7 +40,7 @@ eula=TRUE
 EULA
 
 # Copy mods into the server
-test -f "mods" || mkdir mods
+test -d "mods" || mkdir mods
 cp -f /vagrant/mods/* mods
 
 # Make startup script with upstart
@@ -69,4 +69,4 @@ ${WORK_DIR}/logs/service.log {
 MINECRAFT_LOGROTATE
 
 initctl reload-configuration
-service minecraft start
+service minecraft restart
