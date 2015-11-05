@@ -40,6 +40,7 @@ eula=TRUE
 EULA
 
 # Copy mods into the server
+test -f "mods" || mkdir mods
 cp -f /vagrant/mods/* mods
 
 # Make startup script with upstart
