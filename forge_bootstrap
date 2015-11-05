@@ -39,6 +39,9 @@ cat > eula.txt <<EULA
 eula=TRUE
 EULA
 
+# Copy mods into the server
+cp -f /vagrant/mods/* mods
+
 # Make startup script with upstart
 cat > /etc/init/minecraft.conf <<MINECRAFT_CONF
 # Minecraft upstart script
