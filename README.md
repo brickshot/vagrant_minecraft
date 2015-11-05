@@ -1,6 +1,6 @@
-# Vagrantfile for Forge Server
+# Vagrant for Forge Server
 
-Forked from [](https://github.com/stephen-mw/vagrant_minecraft). Modified to run a Forge server.
+Forked from [vagrant_minecraft](https://github.com/stephen-mw/vagrant_minecraft). Modified to run a Forge server.
 
 # Usage
 
